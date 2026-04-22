@@ -1,0 +1,86 @@
+# configurações iniciais:
+import pygame
+import random
+
+pygame.init()
+pygame.display.set_caption('Campo Minado')
+largura, altura = 360, 360
+tela = pygame.display.set_mode((largura, altura))
+
+# cores
+preto = (0, 0, 0)
+vermelho = (255, 0, 0)
+cinza_claro = (200, 200, 200)
+cinza_medio = (150, 150, 150)
+cinza_escuro = (100, 100, 100)
+
+# paramentros:
+
+linhas = 9
+colunas = 9
+bombas = 10
+tamanho_celula = 40
+
+class Celula:
+    def __init__(self):
+        self.tem_bomba = False
+        self.revelada = False
+        self.bandeira = False
+        self.numero = 0
+
+tabuleiro = []
+
+for i in range(linhas):
+    linha = []
+    for j in range(colunas):
+        linha.append(Celula())
+    tabuleiro.append(linha)
+
+def desenhar_tabuleiro():
+    for i in range(linhas):
+        for j in range(colunas):
+            x = j * tamanho_celula
+            y = i * tamanho_celula
+
+            pygame.draw.rect(tela, cinza_medio, (x, y, tamanho_celula, tamanho_celula))
+            pygame.draw.rect(tela, preto, (x, y, tamanho_celula, tamanho_celula), 1)
+
+
+
+
+def rodar_jogo():
+    fim_jogo = False
+    relogio = pygame.time.Clock()
+
+    while not fim_jogo:
+        tela.fill(cinza_claro)
+
+
+        for evento in pygame.event.get():
+             if evento.type == pygame.QUIT:
+                 fim_jogo = True
+
+        desenhar_tabuleiro()
+        pygame.display.update()
+        relogio.tick(30)
+
+    pygame.quit()
+# criar um loop infinito:
+
+# desenhar os objetos do jogo na tela:
+# tabuleiro
+# células
+# bombas
+# bandeiras
+
+# criar a lógica de terminar o jogo:
+# o que acontece:
+# usuário escolheu a bomba
+# usuário abriu todas as células
+
+# pegar a interações do usuário:
+# fechou a tela
+# apertou com o mouse esquerdo para abrir uma célula 
+# apertou com o mouse direto para colocar uma bandeira 
+
+rodar_jogo()
