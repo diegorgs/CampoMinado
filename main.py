@@ -18,7 +18,7 @@ cinza_escuro = (100, 100, 100)
 
 linhas = 9
 colunas = 9
-bombas = 10
+bombas = 2
 tamanho_celula = 40
 
 class Celula:
@@ -71,6 +71,52 @@ def rodar_jogo():
 # tabuleiro
 # células
 # bombas
+def distribuir_bombas():
+    bombas_colocadas = 0
+
+    while bombas_colocadas < bombas:
+        linha_aleatoria = random.randrange(linhas)
+        coluna_aleatoria = random.randrange(colunas)
+
+        celula = tabuleiro[linha_aleatoria][coluna_aleatoria]
+
+        if not celula.tem_bomba:
+                celula.tem_bomba = True
+                bombas_colocadas += 1
+  
+
+
+for i in range(linhas):
+    for j in range(colunas):
+        if tabuleiro[i][j].tem_bomba:
+            print('Bomba em:', i, j)
+
+
+def calcular_numeros():
+    for i in range(linhas):
+        for j in range(colunas):
+            contador = 0
+
+            for x in range(i-1, i+2):
+                for y in range(j-1, j+2):
+
+                    if 0 <= x < linhas and 0 <= y < colunas:
+                        if x == i and y == j:
+                            continue
+                        if tabuleiro[x][y].tem_bomba:
+                            contador += 1
+
+            tabuleiro[i][j].numero = contador
+distribuir_bombas()
+calcular_numeros()
+
+for i in range(linhas):
+    for j in range(colunas):
+        if tabuleiro[i][j].tem_bomba:
+            print("💣", end=" ")
+        else:
+            print(tabuleiro[i][j].numero, end=" ")
+    print()
 # bandeiras
 
 # criar a lógica de terminar o jogo:
