@@ -36,29 +36,71 @@ for i in range(linhas):
         linha.append(Celula())
     tabuleiro.append(linha)
 
+# def desenhar_tabuleiro():
+#     for i in range(linhas):
+#         for j in range(colunas):
+#             x = j * tamanho_celula
+#             y = i * tamanho_celula
+
+#             pygame.draw.rect(tela, cinza_medio, (x, y, tamanho_celula, tamanho_celula))
+#             pygame.draw.rect(tela, preto, (x, y, tamanho_celula, tamanho_celula), 1)
+
 def desenhar_tabuleiro():
     for i in range(linhas):
         for j in range(colunas):
             x = j * tamanho_celula
             y = i * tamanho_celula
 
-            pygame.draw.rect(tela, cinza_medio, (x, y, tamanho_celula, tamanho_celula))
+            celula = tabuleiro[i][j]
+
+            if celula.revelada:
+                pygame.draw.rect(tela, cinza_claro, (x, y, tamanho_celula, tamanho_celula))
+
+                if celula.tem_bomba:
+                    pygame.draw.circle(tela, vermelho, (x + 20, y + 20), 10)
+                elif celula.numero > 0:
+                    fonte = pygame.font.SysFont(None, 24)
+                    texto = fonte.render(str(celula.numero), True, preto)
+                    tela.blit(texto, (x + 15, y + 10))
+            else:
+                pygame.draw.rect(tela, cinza_medio, (x, y, tamanho_celula, tamanho_celula))
+
             pygame.draw.rect(tela, preto, (x, y, tamanho_celula, tamanho_celula), 1)
-
-
 
 
 def rodar_jogo():
     fim_jogo = False
     relogio = pygame.time.Clock()
-
+    
     while not fim_jogo:
         tela.fill(cinza_claro)
 
-
         for evento in pygame.event.get():
-             if evento.type == pygame.QUIT:
+            if evento.type == pygame.QUIT:
                  fim_jogo = True
+            
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                x_mouse, y_mouse = pygame.mouse.get_pos()
+
+                coluna = x_mouse // tamanho_celula
+                linha = y_mouse // tamanho_celula
+
+                # evita erro ao clicar fora do tabuleiro
+                if 0 <= linha < linhas and 0 <= coluna < colunas:
+                    celula = tabuleiro[linha][coluna]
+
+                    # botão esquerdo → revelar
+                    if evento.button == 1:
+                        celula.revelada = True
+
+                        if celula.tem_bomba:
+                            print("💥 Game Over")
+                            fim_jogo = True  # encerra o jogo
+
+                    # botão direito → bandeira
+                    elif evento.button == 3:
+                        if not celula.revelada:
+                            celula.bandeira = not celula.bandeira
 
         desenhar_tabuleiro()
         pygame.display.update()
@@ -107,6 +149,7 @@ def calcular_numeros():
                             contador += 1
 
             tabuleiro[i][j].numero = contador
+
 distribuir_bombas()
 calcular_numeros()
 
