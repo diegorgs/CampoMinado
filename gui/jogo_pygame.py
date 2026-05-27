@@ -14,7 +14,7 @@ class JogoCampoMinado:
         self.largura = colunas * tamanho_celula
         self.altura = linhas * tamanho_celula
         self.tela = pygame.display.set_mode((self.largura, self.altura))
-        
+
         self.cores = {
             'preto': (0, 0, 0),
             'vermelho': (255, 0, 0),
@@ -23,13 +23,33 @@ class JogoCampoMinado:
             'cinza_escuro': (100, 100, 100),
             'branco': (255, 255, 255),
             'verde': (0, 255, 0),
-            'azul': (0, 0, 255)
+            'azul': (0, 0, 255),
+            'azul_escuro': (0, 0, 139),
+            'laranja': (255, 165, 0),
+            'verde_classico': (0, 128, 0),
         }
+        
+        self.cores_numeros = {
+            1: self.cores['azul'],
+            2: self.cores['verde_classico'],
+            3: self.cores['vermelho'],
+            4: self.cores['azul_escuro'],
+            5: self.cores['laranja']}
+        
+        self.mina_img = pygame.image.load("assets/mina.png")
+        self.mina_img = pygame.transform.scale(
+            self.mina_img,(30, 30)
+        )
+
+        self.bandeira_img = pygame.image.load("assets/flags.png")
+        self.bandeira_img = pygame.transform.scale(
+            self.bandeira_img,(30, 30))
         
         self.fonte = pygame.font.SysFont(None, 30)
         self.tabuleiro = Tabuleiro(linhas, colunas, minas)
         self.fim_jogo = False
         self.vitoria = False
+        self.estado = "menu"
 
     def desenhar(self):
         self.tela.fill(self.cores['cinza_claro'])
@@ -49,22 +69,24 @@ class JogoCampoMinado:
                     
                     if celula.tem_mina:
                         # Desenha uma mina
-                        pygame.draw.circle(self.tela, self.cores['vermelho'], 
-                                           (x + self.tamanho_celula//2, y + self.tamanho_celula//2), 
-                                           self.tamanho_celula//3)
+                        self.tela.blit(self.mina_img, (x + 5, y + 5))
                     elif celula.minas_vizinhas > 0:
                         # Desenha o número de minas
-                        texto = self.fonte.render(str(celula.minas_vizinhas), True, self.cores['preto'])
+                        texto = self.fonte.render(str(celula.minas_vizinhas), True, self.cores_numeros[celula.minas_vizinhas])
                         texto_rect = texto.get_rect(center=(x + self.tamanho_celula//2, y + self.tamanho_celula//2))
                         self.tela.blit(texto, texto_rect)
                 else:
                     pygame.draw.rect(self.tela, self.cores['cinza_medio'], rect)
+                    pygame.draw.line(self.tela, self.cores['branco'],(x, y), (x + self.tamanho_celula, y),2)
+                    pygame.draw.line(self.tela, self.cores['branco'],(x, y), (x, y + self.tamanho_celula),2)
+                    pygame.draw.line(self.tela, self.cores['cinza_escuro'], (x, y + self.tamanho_celula), (x + self.tamanho_celula, y + self.tamanho_celula),2)
+                    pygame.draw.line(self.tela, self.cores['cinza_escuro'], (x + self.tamanho_celula, y), (x + self.tamanho_celula, y + self.tamanho_celula),2)
                     pygame.draw.rect(self.tela, self.cores['preto'], rect, 1)
                     
                     if celula.marcada:
                         # Desenha uma bandeira
                         centro_x, centro_y = x + self.tamanho_celula//2, y + self.tamanho_celula//2
-                        pygame.draw.circle(self.tela, self.cores['azul'], (centro_x, centro_y), self.tamanho_celula//4)
+                        self.tela.blit(self.bandeira_img, (x + 5, y + 5))
         
         # Desenha a mensagem de fim de jogo por cima
         if self.fim_jogo:
