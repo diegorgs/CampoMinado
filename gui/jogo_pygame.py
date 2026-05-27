@@ -8,6 +8,7 @@ class JogoCampoMinado:
         
         self.linhas = linhas
         self.colunas = colunas
+        self.minas = minas
         self.tamanho_celula = tamanho_celula
         
         self.largura = colunas * tamanho_celula
@@ -106,9 +107,22 @@ class JogoCampoMinado:
                 
                 elif evento.button == 3:  # Botão direito
                     self.tabuleiro.alternar_marca(i, j)
-                    
-        return True
 
+            if evento.type == pygame.KEYDOWN:
+                
+                if evento.key == pygame.K_r:
+                    self.__init__(
+                        linhas=9,
+                         colunas=9, 
+                         minas=10, 
+                         tamanho_celula=40)  
+                
+                if evento.key == pygame.K_q:
+                    pygame.quit()
+
+        return True
+            
+                  
     def _revelar_todas_minas(self):
         for i in range(self.linhas):
             for j in range(self.colunas):
