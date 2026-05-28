@@ -38,8 +38,7 @@ class JogoCampoMinado:
         
         self.mina_img = pygame.image.load("assets/mina.png")
         self.mina_img = pygame.transform.scale(
-            self.mina_img,(30, 30)
-        )
+            self.mina_img,(30, 30))
 
         self.bandeira_img = pygame.image.load("assets/flags.png")
         self.bandeira_img = pygame.transform.scale(
