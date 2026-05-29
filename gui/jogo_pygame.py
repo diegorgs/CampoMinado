@@ -16,6 +16,8 @@ class JogoCampoMinado:
         self.largura = colunas * tamanho_celula
         self.altura = linhas * tamanho_celula + self.altura_hud
         self.tela = pygame.display.set_mode((self.largura, self.altura))
+
+        self.estado = "menu"
         
 
         self.cores = {
@@ -63,6 +65,22 @@ class JogoCampoMinado:
 
     def desenhar(self):
         self.tela.fill(self.cores['cinza_claro'])
+
+        if self.estado == "menu":
+            self.tela.fill(self.cores['cinza_escuro'])
+            titulo = self.fonte.render("CAMPO MINADO", True, self.cores['branco'])
+            self.tela.blit(titulo, (60, 50))
+
+            opcao1 = self.fonte.render("1 - Iniciante",True,self.cores['branco'])
+            opcao2 = self.fonte.render("2 - Dificil",True,self.cores['branco'])
+            opcao3 = self.fonte.render("3 - Impossivel",True,self.cores['branco'])
+
+            self.tela.blit(opcao1, (60, 120))
+            self.tela.blit(opcao2, (60, 170))
+            self.tela.blit(opcao3, (60, 220))
+
+            pygame.display.update()
+            return
 
         pygame.draw.rect(self.tela, self.cores['cinza_escuro'],(0, 0, self.largura, self.altura_hud))
         tempo_atual = pygame.time.get_ticks()
@@ -165,13 +183,90 @@ class JogoCampoMinado:
                     self.tabuleiro.alternar_marca(i, j)
 
             if evento.type == pygame.KEYDOWN:
+
+                if self.estado == "menu":
+                    if evento.key == pygame.K_1:
+                        self.estado = "jogo"
+                        self.tabuleiro = Tabuleiro(
+                        self.linhas,
+                        self.colunas,
+                        self.minas)
+
+                        self.largura = self.colunas * self.tamanho_celula
+                        self.altura = (self.linhas * self.tamanho_celula + self.altura_hud)
+
+                        self.tela = pygame.display.set_mode((self.largura, self.altura))
+
+                        
+                    if evento.key == pygame.K_2:
+                        self.estado = "jogo"
+                        self.linhas = 16 
+                        self.colunas = 16
+                        self.minas = 40
+                        self.tabuleiro = Tabuleiro(
+                        self.linhas,
+                        self.colunas,
+                        self.minas)
+                        self.bandeira_img = pygame.transform.scale(self.bandeira_img,(30, 30))
+                        self.mina_img = pygame.transform.scale(self.mina_img,(30, 30))
+                        self.largura = self.colunas * self.tamanho_celula
+                        self.altura = (self.linhas * self.tamanho_celula + self.altura_hud)
+
+                        self.tela = pygame.display.set_mode((self.largura, self.altura))
+
+
+                    if evento.key == pygame.K_3:
+                        self.estado = "jogo"
+                        self.linhas = 24 
+                        self.colunas = 24
+                        self.minas = 120
+                        self.tabuleiro = Tabuleiro(
+                        self.linhas,
+                        self.colunas,
+                        self.minas)
+                        self.tamanho_celula = 25
+                        self.bandeira_img = pygame.transform.scale(self.bandeira_img,(20, 20))
+                        self.mina_img = pygame.transform.scale(self.mina_img,(18, 18))
+                        self.largura = self.colunas * self.tamanho_celula
+                        self.altura = (self.linhas * self.tamanho_celula + self.altura_hud)
+
+                        self.tela = pygame.display.set_mode((self.largura, self.altura))
                 
                 if evento.key == pygame.K_r:
-                    self.__init__(
-                        linhas=9,
-                         colunas=9, 
-                         minas=10, 
-                         tamanho_celula=40)  
+                    if evento.key == pygame.K_r:
+                        self.tabuleiro = Tabuleiro(
+                        self.linhas,
+                        self.colunas,
+                        self.minas)
+
+                        self.largura = self.colunas * self.tamanho_celula
+                        self.altura = ( self.linhas * self.tamanho_celula + self.altura_hud)
+
+                        self.tela = pygame.display.set_mode((self.largura, self.altura))
+
+                        
+                        self.fim_jogo = False
+                        self.vitoria = False
+                        self.tempo_inicial = pygame.time.get_ticks()
+
+                
+                if evento.key == pygame.K_ESCAPE:
+                    self.estado = "menu"
+                    self.linhas = 9
+                    self.colunas = 9
+                    self.minas = 10
+                    self.tamanho_celula = 40
+
+                    self.largura = self.colunas * self.tamanho_celula
+                    self.altura = ( self.linhas * self.tamanho_celula + self.altura_hud)
+
+                    self.tela = pygame.display.set_mode((self.largura, self.altura))
+
+                    
+                    self.fim_jogo = False
+                    self.vitoria = False
+                    self.tempo_inicial = pygame.time.get_ticks()
+
                 
                 if evento.key == pygame.K_q:
                     pygame.quit()
