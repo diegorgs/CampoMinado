@@ -2,7 +2,7 @@ import pygame
 from core.tabuleiro import Tabuleiro
 
 class JogoCampoMinado:
-    def __init__(self, linhas=9, colunas=9, minas=10, tamanho_celula=40):
+    def __init__(self, linhas=9, colunas=9, minas=10, tamanho_celula=40, altura_hud=50):
         pygame.init()
         pygame.display.set_caption('Campo Minado')
         
@@ -10,10 +10,13 @@ class JogoCampoMinado:
         self.colunas = colunas
         self.minas = minas
         self.tamanho_celula = tamanho_celula
+        self.altura_hud = altura_hud
+        self.tempo_inicial = pygame.time.get_ticks()
         
         self.largura = colunas * tamanho_celula
-        self.altura = linhas * tamanho_celula
+        self.altura = linhas * tamanho_celula + self.altura_hud
         self.tela = pygame.display.set_mode((self.largura, self.altura))
+        
 
         self.cores = {
             'preto': (0, 0, 0),
@@ -38,11 +41,19 @@ class JogoCampoMinado:
         
         self.mina_img = pygame.image.load("assets/mina.png")
         self.mina_img = pygame.transform.scale(
-            self.mina_img,(30, 30))
+        self.mina_img,(30, 30))
+        
+        self.mina_hud_img = pygame.transform.scale(
+        self.mina_img,(30, 30))
 
         self.bandeira_img = pygame.image.load("assets/flags.png")
         self.bandeira_img = pygame.transform.scale(
-            self.bandeira_img,(30, 30))
+        self.bandeira_img,(30, 30))
+
+        self.relogio_img = pygame.image.load("assets/relogio.png")
+        self.relogio_img = pygame.transform.scale(
+        self.relogio_img,(30, 30))
+
         
         self.fonte = pygame.font.SysFont(None, 30)
         self.tabuleiro = Tabuleiro(linhas, colunas, minas)
@@ -52,11 +63,35 @@ class JogoCampoMinado:
 
     def desenhar(self):
         self.tela.fill(self.cores['cinza_claro'])
-        
+
+        pygame.draw.rect(self.tela, self.cores['cinza_escuro'],(0, 0, self.largura, self.altura_hud))
+        tempo_atual = pygame.time.get_ticks()
+        tempo_segundos = (tempo_atual - self.tempo_inicial) // 1000
+
+        texto_tempo = self.fonte.render(f"{tempo_segundos}",True,self.cores['branco'])
+
+        self.tela.blit(self.relogio_img, (255, 5))
+        self.tela.blit(texto_tempo, (300, 10))
+
+        bandeiras = 0
+
+        for i in range(self.linhas):
+            for j in range(self.colunas):
+            
+                if self.tabuleiro.grid[i][j].marcada:
+                    bandeiras += 1
+
+        minas_restantes = self.minas - bandeiras
+
+        texto_minas = self.fonte.render(f"{minas_restantes}", True, self.cores['branco'])
+
+        self.tela.blit(self.mina_hud_img, (10, 6))
+        self.tela.blit(texto_minas, (40, 10))
+
         for i in range(self.linhas):
             for j in range(self.colunas):
                 x = j * self.tamanho_celula
-                y = i * self.tamanho_celula
+                y = self.altura_hud + (i * self.tamanho_celula)
                 
                 celula = self.tabuleiro.grid[i][j]
                 
@@ -110,7 +145,7 @@ class JogoCampoMinado:
             if evento.type == pygame.MOUSEBUTTONDOWN and not self.fim_jogo:
                 x, y = pygame.mouse.get_pos()
                 j = x // self.tamanho_celula
-                i = y // self.tamanho_celula
+                i = (y - self.altura_hud) // self.tamanho_celula
                 
                 if not (0 <= i < self.linhas and 0 <= j < self.colunas):
                     continue
