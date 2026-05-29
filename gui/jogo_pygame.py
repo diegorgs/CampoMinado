@@ -11,7 +11,7 @@ class JogoCampoMinado:
         self.minas = minas
         self.tamanho_celula = tamanho_celula
         self.altura_hud = altura_hud
-        self.tempo_inicial = pygame.time.get_ticks()
+       
         
         self.largura = colunas * tamanho_celula
         self.altura = linhas * tamanho_celula + self.altura_hud
@@ -187,6 +187,9 @@ class JogoCampoMinado:
                 if self.estado == "menu":
                     if evento.key == pygame.K_1:
                         self.estado = "jogo"
+                        self.linhas = 9
+                        self.colunas = 9
+                        self.minas = 10
                         self.tabuleiro = Tabuleiro(
                         self.linhas,
                         self.colunas,
@@ -196,6 +199,7 @@ class JogoCampoMinado:
                         self.altura = (self.linhas * self.tamanho_celula + self.altura_hud)
 
                         self.tela = pygame.display.set_mode((self.largura, self.altura))
+                        self.tempo_inicial = pygame.time.get_ticks()
 
                         
                     if evento.key == pygame.K_2:
@@ -213,6 +217,7 @@ class JogoCampoMinado:
                         self.altura = (self.linhas * self.tamanho_celula + self.altura_hud)
 
                         self.tela = pygame.display.set_mode((self.largura, self.altura))
+                        self.tempo_inicial = pygame.time.get_ticks()
 
 
                     if evento.key == pygame.K_3:
@@ -231,6 +236,8 @@ class JogoCampoMinado:
                         self.altura = (self.linhas * self.tamanho_celula + self.altura_hud)
 
                         self.tela = pygame.display.set_mode((self.largura, self.altura))
+                        self.tempo_inicial = pygame.time.get_ticks()
+
                 
                 if evento.key == pygame.K_r:
                     
