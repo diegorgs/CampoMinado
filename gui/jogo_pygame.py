@@ -207,8 +207,8 @@ class JogoCampoMinado:
                         self.linhas,
                         self.colunas,
                         self.minas)
-                        self.bandeira_img = pygame.transform.scale(self.bandeira_img,(30, 30))
-                        self.mina_img = pygame.transform.scale(self.mina_img,(30, 30))
+                        
+                        
                         self.largura = self.colunas * self.tamanho_celula
                         self.altura = (self.linhas * self.tamanho_celula + self.altura_hud)
 
@@ -233,21 +233,20 @@ class JogoCampoMinado:
                         self.tela = pygame.display.set_mode((self.largura, self.altura))
                 
                 if evento.key == pygame.K_r:
-                    if evento.key == pygame.K_r:
-                        self.tabuleiro = Tabuleiro(
-                        self.linhas,
-                        self.colunas,
-                        self.minas)
+                    
+                    self.tabuleiro = Tabuleiro(
+                    self.linhas,
+                    self.colunas,
+                    self.minas)
+                    self.largura = self.colunas * self.tamanho_celula
+                    self.altura = ( self.linhas * self.tamanho_celula + self.altura_hud)
 
-                        self.largura = self.colunas * self.tamanho_celula
-                        self.altura = ( self.linhas * self.tamanho_celula + self.altura_hud)
-
-                        self.tela = pygame.display.set_mode((self.largura, self.altura))
+                    self.tela = pygame.display.set_mode((self.largura, self.altura))
 
                         
-                        self.fim_jogo = False
-                        self.vitoria = False
-                        self.tempo_inicial = pygame.time.get_ticks()
+                    self.fim_jogo = False
+                    self.vitoria = False
+                    self.tempo_inicial = pygame.time.get_ticks()
 
                 
                 if evento.key == pygame.K_ESCAPE:
