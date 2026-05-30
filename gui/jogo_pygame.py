@@ -32,6 +32,9 @@ class JogoCampoMinado:
             'azul_escuro': (0, 0, 139),
             'laranja': (255, 165, 0),
             'verde_classico': (0, 128, 0),
+            'azul_ciano': (0, 128, 128),
+            'roxo': (128, 0, 128),
+            'amarelo': (255, 255, 0)
         }
         
         self.cores_numeros = {
@@ -39,7 +42,11 @@ class JogoCampoMinado:
             2: self.cores['verde_classico'],
             3: self.cores['vermelho'],
             4: self.cores['azul_escuro'],
-            5: self.cores['laranja']}
+            5: self.cores['laranja'],
+            6: self.cores['azul_ciano'],
+            7: self.cores['roxo'],
+            8: self.cores['amarelo']
+            }
         
         self.mina_img = pygame.image.load("assets/mina.png")
         self.mina_img = pygame.transform.scale(
