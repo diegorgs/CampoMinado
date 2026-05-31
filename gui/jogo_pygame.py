@@ -1,4 +1,5 @@
 import pygame
+from core import sons
 from core.tabuleiro import Tabuleiro
 
 class JogoCampoMinado:
@@ -178,16 +179,20 @@ class JogoCampoMinado:
                 if evento.button == 1:  # Botão esquerdo
                     if not self.tabuleiro.grid[i][j].marcada:
                         self.tabuleiro.revelar(i, j)
+                        sons.som_click.play()
                         if self.tabuleiro.grid[i][j].tem_mina:
+                            sons.som_mina.play()
                             self.fim_jogo = True
                             self.vitoria = False
                             self._revelar_todas_minas()
                         elif self.tabuleiro.verificar_vitoria():
                             self.fim_jogo = True
                             self.vitoria = True
+                            sons.som_vitoria.play()
                 
                 elif evento.button == 3:  # Botão direito
                     self.tabuleiro.alternar_marca(i, j)
+                    sons.som_flag.play()
 
             if evento.type == pygame.KEYDOWN:
 
