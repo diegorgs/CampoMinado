@@ -2,40 +2,29 @@ import pygame
 from core import sons
 from core.tabuleiro import Tabuleiro
 
-# Interface do jogo Campo Minado usando Pygame.
-# Esta classe controla o menu, o estado da partida e a renderização do tabuleiro.
 class JogoCampoMinado:
     def __init__(self, linhas=9, colunas=9, minas=10, tamanho_celula=40, altura_hud=50):
-        # Inicializa o Pygame e seta o título da janela.
         pygame.init()
         pygame.display.set_caption('Campo Minado')
         
-        # Configurações de jogo e tamanho inicial do tabuleiro.
         self.linhas = linhas
         self.colunas = colunas
         self.minas = minas
         self.tamanho_celula = tamanho_celula
-
-        # Parâmetros específicos do menu para uma tela maior e botões maiores.
         self.menu_tamanho_celula = 60
         self.menu_largura = 720
         self.menu_altura = 640
         self.altura_hud = altura_hud
         
-        # Calcula a largura e altura da janela com base no tabuleiro.
+        
         self.largura = colunas * tamanho_celula
         self.altura = linhas * tamanho_celula + self.altura_hud
-
-        # Estado inicial começa no menu.
         self.estado = "menu"
         if self.estado == "menu":
             self.largura = max(self.largura, self.menu_largura)
             self.altura = max(self.altura, self.menu_altura)
-
-        # Cria a janela do jogo.
         self.tela = pygame.display.set_mode((self.largura, self.altura))
 
-        # Paleta de cores reutilizada em toda a interface.
         self.cores = {
             'preto': (0, 0, 0),
             'vermelho': (255, 0, 0),
@@ -83,7 +72,6 @@ class JogoCampoMinado:
         self.fonte = pygame.font.SysFont('consolas', 28)
         self.fonte_titulo = pygame.font.SysFont('consolas', 52, bold=True)
         self.fonte_mini = pygame.font.SysFont('consolas', 18)
-        # Opções de dificuldade do menu principal.
         self.menu_opcoes = [
             {'texto': 'Iniciante', 'linhas': 9, 'colunas': 9, 'minas': 10, 'tamanho_celula': 60},
             {'texto': 'Difícil', 'linhas': 16, 'colunas': 16, 'minas': 40, 'tamanho_celula': 50},
@@ -91,13 +79,11 @@ class JogoCampoMinado:
         ]
         self.hovered_opcao = None
 
-        # Carrega os sprites originais para redimensioná-los de acordo com o tamanho da grade.
         self.mina_img_original = pygame.image.load("assets/mina.png")
         self.bandeira_img_original = pygame.image.load("assets/flags.png")
         self.relogio_img_original = pygame.image.load("assets/relogio.png")
         self._ajustar_assets(self.tamanho_celula)
 
-        # Cria o tabuleiro e inicializa o estado de partida.
         self.tabuleiro = Tabuleiro(linhas, colunas, minas)
         self.fim_jogo = False
         self.vitoria = False
@@ -105,11 +91,9 @@ class JogoCampoMinado:
         self.estado = "menu"
 
     def desenhar(self):
-        # Renderiza toda a tela conforme o estado atual do jogo.
         self.tela.fill(self.cores['cinza_claro'])
 
         if self.estado == "menu":
-            # Desenha a tela de seleção de dificuldade.
             self.tela.fill((14, 25, 55))
             titulo_texto = self.fonte_titulo.render("CAMPO MINADO", True, self.cores['amarelo'])
             sombra_titulo = self.fonte_titulo.render("CAMPO MINADO", True, self.cores['preto'])
@@ -201,42 +185,36 @@ class JogoCampoMinado:
                         centro_x, centro_y = x + self.tamanho_celula//2, y + self.tamanho_celula//2
                         self.tela.blit(self.bandeira_img, (x + 5, y + 5))
         
-        # Desenha a mensagem de fim de jogo por cima do tabuleiro.
+        # Desenha a mensagem de fim de jogo por cima
         if self.fim_jogo:
             mensagem = "Você Venceu!" if self.vitoria else "Você Perdeu!"
             cor_msg = self.cores['verde'] if self.vitoria else self.cores['vermelho']
             texto_fim = self.fonte_titulo.render(mensagem, True, cor_msg)
 
-            # Tela escurecida de overlay para destacar a mensagem.
             overlay = pygame.Surface((self.largura, self.altura), pygame.SRCALPHA)
             overlay.fill((0, 0, 0, 180))
             self.tela.blit(overlay, (0, 0))
 
-            # Caixa central para o painel de fim de jogo.
-            caixa = pygame.Rect(self.largura // 2 - 220, self.altura // 2 - 170, 440, 340)
+            caixa = pygame.Rect(self.largura // 2 - 220, self.altura // 2 - 140, 440, 280)
             pygame.draw.rect(self.tela, self.cores['cinza_escuro'], caixa, border_radius=20)
             pygame.draw.rect(self.tela, self.cores['branco'], caixa, 3, border_radius=20)
 
-            # Texto principal com a mensagem de vitória/derrota.
-            texto_rect = texto_fim.get_rect(center=(self.largura // 2, self.altura // 2 - 80))
+            texto_rect = texto_fim.get_rect(center=(self.largura // 2, self.altura // 2 - 70))
             self.tela.blit(texto_fim, texto_rect)
 
-            # Instruções de teclado apresentadas logo abaixo do título.
             instrucoes1 = self.fonte_mini.render("Pressione R para reiniciar", True, self.cores['branco'])
             instrucoes2 = self.fonte_mini.render("Pressione M para voltar ao menu", True, self.cores['branco'])
-            instr1_rect = instrucoes1.get_rect(center=(self.largura // 2, self.altura // 2 - 30))
-            instr2_rect = instrucoes2.get_rect(center=(self.largura // 2, self.altura // 2 + 0))
+            instr1_rect = instrucoes1.get_rect(center=(self.largura // 2, self.altura // 2 + 2))
+            instr2_rect = instrucoes2.get_rect(center=(self.largura // 2, self.altura // 2 + 20))
             self.tela.blit(instrucoes1, instr1_rect)
             self.tela.blit(instrucoes2, instr2_rect)
 
-            # Exibe o tempo final de partida, se já estiver definido.
             if self.tempo_final is not None:
                 tempo_final_segundos = (self.tempo_final - self.tempo_inicial) // 1000
                 texto_tempo_final = self.fonte_mini.render(f"Tempo final: {tempo_final_segundos}s", True, self.cores['amarelo'])
-                tempo_final_rect = texto_tempo_final.get_rect(center=(self.largura // 2, self.altura // 2 + 40))
+                tempo_final_rect = texto_tempo_final.get_rect(center=(self.largura // 2, self.altura // 2 + 75))
                 self.tela.blit(texto_tempo_final, tempo_final_rect)
 
-            # Botões de ação do game over: reiniciar ou voltar ao menu.
             botoes = self._calcular_retangulos_game_over()
             texto_reiniciar = self.fonte.render("REINICIAR", True, self.cores['branco'])
             texto_menu = self.fonte.render("MENU", True, self.cores['branco'])
@@ -252,8 +230,6 @@ class JogoCampoMinado:
         pygame.display.update()
 
     def processar_eventos(self):
-        # Lê os eventos do Pygame e atualiza o estado do jogo.
-        # Retorna False quando o jogo deve ser finalizado.
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 return False
@@ -333,7 +309,6 @@ class JogoCampoMinado:
         return True
 
     def _reiniciar_partida(self):
-        # Reinicia a partida atual mantendo a dificuldade escolhida.
         self.tabuleiro = Tabuleiro(
             self.linhas,
             self.colunas,
@@ -345,7 +320,6 @@ class JogoCampoMinado:
         self.tempo_inicial = pygame.time.get_ticks()
 
     def _reset_para_menu(self):
-        # Retorna ao menu principal e zera o estado do jogo.
         self.estado = "menu"
         self.linhas = 9
         self.colunas = 9
@@ -361,7 +335,6 @@ class JogoCampoMinado:
         self.tempo_inicial = pygame.time.get_ticks()
 
     def _calcular_retangulos_menu(self):
-        # Retorna os retângulos dos botões do menu principal.
         largura_botao = min(560, self.largura - 160)
         altura_botao = 90
         espacamento = 24
@@ -371,18 +344,16 @@ class JogoCampoMinado:
                 for index in range(len(self.menu_opcoes))]
 
     def _calcular_retangulos_game_over(self):
-        # Calcula a posição dos botões do game over, sempre abaixo do texto de tempo final.
         largura_botao = 160
         altura_botao = 50
         espacamento = 20
         x = self.largura // 2 - largura_botao - espacamento // 2
-        y = self.altura // 2 + 80
+        y = self.altura // 2 + 60
         botao_reiniciar = pygame.Rect(x, y, largura_botao, altura_botao)
         botao_menu = pygame.Rect(x + largura_botao + espacamento, y, largura_botao, altura_botao)
         return [botao_reiniciar, botao_menu]
 
     def _ajustar_assets(self, tamanho_celula):
-        # Ajusta o tamanho dos ícones do jogo conforme as células do tabuleiro.
         escala = 30 if tamanho_celula >= 30 else max(18, tamanho_celula - 5)
         self.mina_img = pygame.transform.smoothscale(self.mina_img_original, (escala, escala))
         self.mina_hud_img = pygame.transform.smoothscale(self.mina_img_original, (escala, escala))
@@ -390,13 +361,11 @@ class JogoCampoMinado:
         self.relogio_img = pygame.transform.smoothscale(self.relogio_img_original, (30, 30))
 
     def _redefinir_tela(self):
-        # Recalcula a janela sempre que a dificuldade ou o tamanho do tabuleiro muda.
         self.largura = self.colunas * self.tamanho_celula
         self.altura = self.linhas * self.tamanho_celula + self.altura_hud
         self.tela = pygame.display.set_mode((self.largura, self.altura))
 
     def _iniciar_jogo(self, opcao):
-        # Inicia uma nova partida com a dificuldade selecionada no menu.
         self.estado = "jogo"
         self.linhas = opcao['linhas']
         self.colunas = opcao['colunas']
@@ -410,16 +379,15 @@ class JogoCampoMinado:
         self.tempo_inicial = pygame.time.get_ticks()
 
         return True
-
+            
+                  
     def _revelar_todas_minas(self):
-        # Revela todas as minas no tabuleiro após derrota.
         for i in range(self.linhas):
             for j in range(self.colunas):
                 if self.tabuleiro.grid[i][j].tem_mina:
                     self.tabuleiro.grid[i][j].revelada = True
 
     def executar(self):
-        # Loop principal do jogo: processa eventos, desenha a cena e controla o FPS.
         rodando = True
         relogio = pygame.time.Clock()
         
