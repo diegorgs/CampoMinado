@@ -75,7 +75,7 @@ class JogoCampoMinado:
         self.menu_opcoes = [
             {'texto': 'Iniciante', 'linhas': 9, 'colunas': 9, 'minas': 10, 'tamanho_celula': 60},
             {'texto': 'Difícil', 'linhas': 16, 'colunas': 16, 'minas': 40, 'tamanho_celula': 50},
-            {'texto': 'Impossível', 'linhas': 24, 'colunas': 24, 'minas': 120, 'tamanho_celula': 35},
+            {'texto': 'Impossível', 'linhas': 24, 'colunas': 24, 'minas': 120, 'tamanho_celula': 28},
         ]
         self.hovered_opcao = None
 
@@ -318,6 +318,8 @@ class JogoCampoMinado:
         self.fim_jogo = False
         self.vitoria = False
         self.tempo_inicial = pygame.time.get_ticks()
+        print(f"Largura: {self.largura}")
+        print(f"Altura: {self.altura}")
 
     def _reset_para_menu(self):
         self.estado = "menu"
