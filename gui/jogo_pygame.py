@@ -166,11 +166,18 @@ class JogoCampoMinado:
                     
                     if celula.tem_mina:
                         # Desenha uma mina
-                        self.tela.blit(self.mina_img, (x + 5, y + 5))
+                        cx = x + self.tamanho_celula // 2
+                        cy = y + self.tamanho_celula // 2
+
+                        mina_rect = self.mina_img.get_rect(center=(cx, cy))
+                        self.tela.blit(self.mina_img, mina_rect)
                     elif celula.minas_vizinhas > 0:
                         # Desenha o número de minas
                         texto = self.fonte.render(str(celula.minas_vizinhas), True, self.cores_numeros[celula.minas_vizinhas])
-                        texto_rect = texto.get_rect(center=(x + self.tamanho_celula//2, y + self.tamanho_celula//2))
+                        cx = x + self.tamanho_celula // 2
+                        cy = y + self.tamanho_celula // 2
+
+                        texto_rect = texto.get_rect(center=(cx, cy))
                         self.tela.blit(texto, texto_rect)
                 else:
                     pygame.draw.rect(self.tela, self.cores['cinza_medio'], rect)
@@ -182,9 +189,10 @@ class JogoCampoMinado:
                     
                     if celula.marcada:
                         # Desenha uma bandeira
-                        centro_x, centro_y = x + self.tamanho_celula//2, y + self.tamanho_celula//2
-                        self.tela.blit(self.bandeira_img, (x + 5, y + 5))
-        
+                        cx = x + self.tamanho_celula // 2
+                        cy = y + self.tamanho_celula // 2
+                        flag_rect = self.bandeira_img.get_rect(center=(cx, cy))
+                        self.tela.blit(self.bandeira_img, flag_rect)      
         # Desenha a mensagem de fim de jogo por cima
         if self.fim_jogo:
             mensagem = "Você Venceu!" if self.vitoria else "Você Perdeu!"
@@ -212,7 +220,7 @@ class JogoCampoMinado:
             if self.tempo_final is not None:
                 tempo_final_segundos = (self.tempo_final - self.tempo_inicial) // 1000
                 texto_tempo_final = self.fonte_mini.render(f"Tempo final: {tempo_final_segundos}s", True, self.cores['amarelo'])
-                tempo_final_rect = texto_tempo_final.get_rect(center=(self.largura // 2, self.altura // 2 + 75))
+                tempo_final_rect = texto_tempo_final.get_rect(center=(self.largura // 2, self.altura // 2 + 40))
                 self.tela.blit(texto_tempo_final, tempo_final_rect)
 
             botoes = self._calcular_retangulos_game_over()
@@ -259,21 +267,31 @@ class JogoCampoMinado:
                         continue
 
                     if evento.button == 1:  # Botão esquerdo
-                        if not self.tabuleiro.grid[i][j].marcada:
-                            self.tabuleiro.revelar(i, j)
-                            sons.som_click.play()
-                            if self.tabuleiro.grid[i][j].tem_mina:
+                        celula = self.tabuleiro.grid[i][j]
+
+                        if celula.revelada or celula.marcada:
+                            continue
+
+                        self.tabuleiro.revelar(i, j)
+                        sons.som_click.play()
+
+                        if self.tabuleiro.grid[i][j].tem_mina:
                                 sons.som_mina.play()
                                 self.fim_jogo = True
                                 self.vitoria = False
                                 self.tempo_final = pygame.time.get_ticks()
                                 self._revelar_todas_minas()
-                            elif self.tabuleiro.verificar_vitoria():
+                        elif self.tabuleiro.verificar_vitoria():
                                 self.fim_jogo = True
                                 self.vitoria = True
                                 self.tempo_final = pygame.time.get_ticks()
                                 sons.som_vitoria.play()
                     elif evento.button == 3:  # Botão direito
+                        celula = self.tabuleiro.grid[i][j]
+                        
+                        if celula.revelada:
+                            continue  # não faz nada em célula aberta
+
                         self.tabuleiro.alternar_marca(i, j)
                         sons.som_flag.play()
 
@@ -351,9 +369,10 @@ class JogoCampoMinado:
         return [botao_reiniciar, botao_menu]
 
     def _ajustar_assets(self, tamanho_celula):
+        self.hud_escala = 30
         escala = 30 if tamanho_celula >= 30 else max(18, tamanho_celula - 5)
         self.mina_img = pygame.transform.smoothscale(self.mina_img_original, (escala, escala))
-        self.mina_hud_img = pygame.transform.smoothscale(self.mina_img_original, (escala, escala))
+        self.mina_hud_img = pygame.transform.smoothscale(self.mina_img_original, (self.hud_escala, self.hud_escala))
         self.bandeira_img = pygame.transform.smoothscale(self.bandeira_img_original, (escala, escala))
         self.relogio_img = pygame.transform.smoothscale(self.relogio_img_original, (30, 30))
 
@@ -363,6 +382,8 @@ class JogoCampoMinado:
         self.tela = pygame.display.set_mode((self.largura, self.altura))
 
     def _iniciar_jogo(self, opcao):
+
+        self.fonte = pygame.font.SysFont('consolas',max(10,int(self.tamanho_celula * 0.45)))
         self.estado = "jogo"
         self.linhas = opcao['linhas']
         self.colunas = opcao['colunas']
